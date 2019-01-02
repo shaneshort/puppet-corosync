@@ -118,7 +118,7 @@ quorum {
 <% if @votequorum_expected_votes.to_i == 2 -%>
   two_node: 1
 <% end -%>
-<% elsif Array(@quorum_members).count == 2 -%>
+<% elsif Array(@quorum_members).count == 2 && !@enable_qdevice-%>
   two_node: 1
 <% end -%>
 <% if @enable_qdevice %>
