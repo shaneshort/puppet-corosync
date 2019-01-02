@@ -360,10 +360,10 @@ class corosync(
   Boolean $manage_pacemaker_service                                  = $corosync::params::manage_pacemaker_service,
   Boolean $enable_pcsd_service                                       = $corosync::params::enable_pcsd_service,
   Boolean $manage_pcsd_service                                       = false,
-  Boolean $enabled_qdevice                                           = false,
+  Boolean $enable_qdevice                                            = false,
   Optional[Boolean] $qdevice_tls                                     = false,
   Optional[String] $qdevice_host                                     = undef,
-  Optional[String] $qdevice_algorithm                                = undef,
+  Optional[String] $qdevice_algorithm                                = $corosync::params::qdevice_algorithm,
   Optional[String] $cluster_name                                     = undef,
   Optional[Integer] $join                                            = undef,
   Optional[Integer] $consensus                                       = undef,
@@ -563,14 +563,14 @@ class corosync(
     }
   }
 
-  if $enabled_qdevice {
+  if $enable_qdevice {
     package { 'corosync-qdevice':
       ensure => present,
     }
 
     service { 'corosync-qdevice':
-      ensure => running,
-      require => Package[ ['corosync-qdevice'], ['corosync'] ]
+      ensure  => running,
+      require => Package[ ['corosync-qdevice'], ['corosync'] ],
     }
   }
 }

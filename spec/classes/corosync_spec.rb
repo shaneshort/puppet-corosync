@@ -558,6 +558,49 @@ describe 'corosync' do
       end
     end
 
+    context 'when qdevice is enabled' do
+      before do
+        params.merge!(
+            enable_qdevice: true,
+            qdevice_host: 'qdevice-host'
+        )
+      end
+      it 'configures the qdevice host' do
+        is_expected.to contain_file('/etc/corosync/corosync.conf').with_content(
+          %r{host:\s*qdevice-host\n}
+        )
+      end
+
+      it 'configures the qdevice algorithm to ffsplit by default' do
+        is_expected.to contain_file('/etc/corosync/corosync.conf').with_content(
+            %r{algorithm:\s*ffsplit\n}
+        )
+      end
+
+      it 'has tls disabled by default' do
+        is_expected.to contain_file('/etc/corosync/corosync.conf').with_content(
+            %r{tls:\s*off\n}
+        )
+      end
+
+      it 'allows you to enable tls' do
+        params.merge!(
+            qdevice_tls: true
+        )
+        is_expected.to contain_file('/etc/corosync/corosync.conf').with_content(
+            %r{tls:\s*on\n}
+        )
+      end
+      it 'allows you to change the qdevice algorithm' do
+        params.merge!(
+            qdevice_algorithm: 'lms'
+        )
+        is_expected.to contain_file('/etc/corosync/corosync.conf').with_content(
+            %r{algorithm:\s*lms\n}
+        )
+      end
+    end
+
     context 'when configuring defaults for logging' do
       it 'configures stderr, syslog priority, func names' do
         is_expected.to contain_file('/etc/corosync/corosync.conf').with_content(

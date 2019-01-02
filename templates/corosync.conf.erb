@@ -109,7 +109,7 @@ logging {
   debug:           <%= @debug ? 'on' : 'off' %>
 }
 
-<% if @set_votequorum -%>
+<% if @set_votequorum || @enable_qdevice -%>
 quorum {
   provider: corosync_votequorum
 <% if @votequorum_expected_votes -%>
