@@ -121,6 +121,17 @@ quorum {
 <% elsif Array(@quorum_members).count == 2 -%>
   two_node: 1
 <% end -%>
+<% if @enable_qdevice %>
+  device {
+    model: net
+    votes: 1
+    net {
+      tls: <%= @qdevice_tls ? 'on' : 'off' %>
+      host: <%= @qdevice_host %>
+      algorithm: <%= @qdevice_algorithm %>
+    }
+  }
+<% end %>
 }
 
 <% if Array(@quorum_members).length > 0 -%>

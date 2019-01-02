@@ -235,6 +235,24 @@
 #   pcsd service is the GUI and the remote configuration interface.
 #   Default: false
 #
+# [*enable_qdevice*]
+#   Enables support for dedicated quorum devices.
+#   Default: false
+#
+# [*qdevice_tls*]
+#   Enables TLS support for the specified quorum device
+#   Default: false
+#
+# [*qdevice_host*]
+#   Specifies the host running the quorum device
+#   Default: false
+#
+# [*qdevice_algorithm*]
+#   Decision  algorithm.  Can  be  one of the ffsplit or lms.
+#   For a description of what each algorithm means and how
+#   algorithms differ, see the corosync-qdevice(8).
+#   Default: ffsplit
+#
 # [*cluster_name*]
 #   This specifies the name of cluster and it's used for automatic
 #   generating of multicast address.
@@ -342,6 +360,10 @@ class corosync(
   Boolean $manage_pacemaker_service                                  = $corosync::params::manage_pacemaker_service,
   Boolean $enable_pcsd_service                                       = $corosync::params::enable_pcsd_service,
   Boolean $manage_pcsd_service                                       = false,
+  Boolean $enabled_qdevice                                           = false,
+  Optional[Boolean] $qdevice_tls                                     = false,
+  Optional[String] $qdevice_host                                     = undef,
+  Optional[String] $qdevice_algorithm                                = undef,
   Optional[String] $cluster_name                                     = undef,
   Optional[Integer] $join                                            = undef,
   Optional[Integer] $consensus                                       = undef,
@@ -538,6 +560,17 @@ class corosync(
       ensure    => running,
       enable    => $enable_corosync_service,
       subscribe => File[ [ '/etc/corosync/corosync.conf', '/etc/corosync/service.d' ] ],
+    }
+  }
+
+  if $enabled_qdevice {
+    package { 'corosync-qdevice':
+      ensure => present,
+    }
+
+    service { 'corosync-qdevice':
+      ensure => running,
+      require => Package[ ['corosync-qdevice'], ['corosync'] ]
     }
   }
 }

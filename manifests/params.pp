@@ -22,6 +22,9 @@ class corosync::params {
   $manage_corosync_service             = true
   $enable_pacemaker_service            = true
   $enable_pcsd_service                 = true
+  $enable_qdevice                      = false
+  $qdevice_tls                         = false
+  $qdevice_algorithm                   = 'ffsplit'
 
   case $::osfamily {
     'RedHat': {
