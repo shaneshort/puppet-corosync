@@ -292,10 +292,10 @@
 #   consensus value.
 #
 # @param ip_version
-#   This specifies version of IP to ask DNS resolver for.  The value can be 
+#   This specifies version of IP to ask DNS resolver for.  The value can be
 #   one of ipv4 (look only for an IPv4 address) , ipv6 (check only IPv6 address),
 #   ipv4-6 (look for all address families and use first IPv4 address found in the
-#   list if there is such address, otherwise use first IPv6 address) and 
+#   list if there is such address, otherwise use first IPv6 address) and
 #   ipv6-4 (look for all address families and use first IPv6 address found in the
 #   list if there is such address, otherwise use first IPv4 address).
 #
@@ -589,8 +589,14 @@ class corosync (
       # if they were already authenticated so it's safe to run every time this
       # is applied.
       # TODO - make it run only once
+      if $::lsbdistcodename == 'focal' {
+        $pcs_cluster_auth_command = "pcs host auth ${node_string} ${auth_credential_string}"
+      } else {
+        $pcs_cluster_auth_command = "pcs cluster auth ${node_string} ${auth_credential_string}"
+      }
+
       exec { 'pcs_cluster_auth':
-        command => "pcs cluster auth ${node_string} ${auth_credential_string}",
+        command => $pcs_cluster_auth_command,
         path    => $exec_path,
         require => [
           Service['pcsd'],
@@ -615,8 +621,14 @@ class corosync (
       # If the cluster hasn't been configured yet, temporarily configure it so
       # the pcs_cluster_auth_qdevice command doesn't fail. This should generate
       # a temporary corosync.conf which will then be overwritten
+      if $::lsbdistcodename == 'focal' {
+        $pcs_cluster_temporary_command = "pcs cluster setup ${cluster_name} --force --start  ${node_string}"
+      } else {
+        $pcs_cluster_temporary_command = "pcs cluster setup --force --name ${cluster_name} ${node_string}"
+      }
+
       exec { 'pcs_cluster_temporary':
-        command => "pcs cluster setup --force --name ${cluster_name} ${node_string}",
+        command => $pcs_cluster_temporary_command,
         path    => $exec_path,
         onlyif  => 'test ! -f /etc/corosync/corosync.conf',
         require => Exec['pcs_cluster_auth'],
@@ -632,8 +644,15 @@ class corosync (
       $qdevice_token_check = "${token_prefix} ${quorum_device_host} ${token_suffix}"
 
       $quorum_device_password = $sensitive_quorum_device_password.unwrap
+
+      if $::lsbdistcodename == 'focal' {
+        $pcs_cluster_auth_qdevice_command = "pcs host auth ${quorum_device_host} -u hacluster -p ${quorum_device_password}"
+      } else {
+        $pcs_cluster_auth_qdevice_command = "pcs cluster auth ${quorum_device_host} -u hacluster -p ${quorum_device_password}"
+      }
+
       exec { 'pcs_cluster_auth_qdevice':
-        command => "pcs cluster auth ${quorum_device_host} -u hacluster -p ${quorum_device_password}",
+        command => $pcs_cluster_auth_qdevice_command,
         path    => $exec_path,
         onlyif  => $qdevice_token_check,
         require => [
