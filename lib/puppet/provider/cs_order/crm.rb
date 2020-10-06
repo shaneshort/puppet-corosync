@@ -60,7 +60,6 @@ Puppet::Type.type(:cs_order).provide(:crm, parent: PuppetX::Voxpupuli::Corosync:
         ensure:      :present,
         first:       first,
         second:      second,
-        score:       items['score'],
         kind:        kind,
         symmetrical: symmetrical,
         provider:    name
@@ -78,7 +77,6 @@ Puppet::Type.type(:cs_order).provide(:crm, parent: PuppetX::Voxpupuli::Corosync:
       ensure:      :present,
       first:       @resource[:first],
       second:      @resource[:second],
-      score:       @resource[:score],
       symmetrical: @resource[:symmetrical],
       kind:        @resource[:kind],
       cib:         @resource[:cib]
