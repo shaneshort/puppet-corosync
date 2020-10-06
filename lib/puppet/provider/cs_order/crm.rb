@@ -99,9 +99,7 @@ Puppet::Type.type(:cs_order).provide(:crm, parent: PuppetX::Voxpupuli::Corosync:
 
     updated = 'order '
     updated << "#{@property_hash[:name]} "
-    if @property_hash[:score]
-      updated << "#{@property_hash[:score]}: "
-    elsif feature? :kindness
+    if feature? :kindness
       updated << "#{@property_hash[:kind]}: "
     end
     updated << "#{@property_hash[:first]} #{@property_hash[:second]} symmetrical=#{@property_hash[:symmetrical]}"
