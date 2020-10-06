@@ -268,6 +268,9 @@
 #   [corosync-qdevice man page](https://www.systutorials.com/docs/linux/man/8-corosync-qdevice/)
 #   for details.
 #
+# @param quorum_device_disable_tls
+#   Disable TLS support on the qdevice.
+#
 # @param package_quorum_device
 #   The name of the package providing the quorum device functionality. This
 #   parameter is mandatory if manage_quorum_device is true.
@@ -396,6 +399,7 @@ class corosync (
   Boolean $manage_quorum_device                                      = false,
   Optional[Stdlib::Fqdn] $quorum_device_host                         = undef,
   Optional[Corosync::QuorumAlgorithm] $quorum_device_algorithm       = 'ffsplit',
+  Optional[Enum['yes','no']] $quorum_device_disable_tls              = 'yes',
   Optional[String] $package_quorum_device                            = $corosync::params::package_quorum_device,
   Optional[Sensitive[String]] $sensitive_quorum_device_password      = undef,
   Optional[String[1]] $cluster_name                                  = undef,

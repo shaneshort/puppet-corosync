@@ -138,6 +138,9 @@ quorum {
 <% end -%>
 
     net {
+      <% if @quorum_device_disable_tls == 'yes' -%>
+      tls:       off
+      <% end -%>
       algorithm: <%= @quorum_device_algorithm %>
       host:      <%= @quorum_device_host %>
     }
